@@ -5,6 +5,7 @@ import (
 	"book-fiber/dto"
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -45,4 +46,43 @@ func (c customerService) Create(ctx context.Context, req dto.CreateCustomerReque
 		},
 	}
 	return c.customerRepository.Save(ctx, &customer)
+}
+
+func (c customerService) Update(ctx context.Context, req dto.UpdateCustomerRequest) error {
+	persisted, err := c.customerRepository.FindById(ctx, req.ID)
+	if err != nil {
+		return err
+	}
+	if persisted.ID == "" {
+		return errors.New("data customer tidak ditemukan")
+	}
+	persisted.Code = req.Code
+	persisted.Name = req.Name
+	persisted.UpdatedAt = sql.NullTime{
+		Valid: true,
+		Time:  time.Now(),
+	}
+	return c.customerRepository.Update(ctx, &persisted)
+}
+
+func (c customerService) Delete(ctx context.Context, id string) error {
+	exist, err := c.customerRepository.FindById(ctx, id)
+	if err != nil {
+		return err
+	}
+	if exist.ID == "" {
+		return errors.New("data customer tidak ditemukan")
+	}
+	return c.customerRepository.Delete(ctx, id)
+}
+
+func (c customerService) Show(ctx context.Context, id string) (dto.CustomerData, error) {
+	persisted, err := c.customerRepository.FindById(ctx, id)
+	if err != nil {
+		return dto.CustomerData{}, err
+	}
+	if persisted.ID == "" {
+		return dto.CustomerData{}, errors.New("data customer tidak ditemukan")
+	}
+	return dto.CustomerData{ID: persisted.ID, Code: persisted.Code, Name: persisted.Name}, nil
 }
