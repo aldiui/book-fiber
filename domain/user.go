@@ -16,5 +16,6 @@ type User struct {
 }
 
 type UserRepository interface {
-	FindVyEmail(ctx context.Context, email string) (User, error)
+	FindByEmail(ctx context.Context, email string) (User, error)
+	Save(ctx context.Context, c *User) error
 }

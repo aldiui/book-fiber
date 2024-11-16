@@ -15,13 +15,14 @@ type customerApi struct {
 	customerService domain.CustomerService
 }
 
-func NewCustomer(app *fiber.App, customerService domain.CustomerService) {
+func NewCustomer(app *fiber.App, customerService domain.CustomerService, auzhMidd fiber.Handler) {
 	ca := customerApi{customerService: customerService}
 
-	app.Get("/customers", ca.Index)
-	app.Post("/customers", ca.Create)
-	app.Put("/customers/:id", ca.Update)
-	app.Delete("/customers/:id", ca.Delete)
+	app.Get("/customers", auzhMidd, ca.Index)
+	app.Post("/customers", auzhMidd, ca.Create)
+	app.Get("/customers/:id", auzhMidd, ca.Show)
+	app.Put("/customers/:id", auzhMidd, ca.Update)
+	app.Delete("/customers/:id", auzhMidd, ca.Delete)
 }
 
 func (ca customerApi) Index(ctx *fiber.Ctx) error {
@@ -42,7 +43,7 @@ func (ca customerApi) Create(ctx *fiber.Ctx) error {
 
 	var req dto.CreateCustomerRequest
 	if err := ctx.BodyParser(&req); err != nil {
-		return ctx.SendStatus(http.StatusUnprocessableEntity)
+		return ctx.Status(http.StatusUnprocessableEntity).JSON(dto.CreateResponseError(err.Error()))
 	}
 	fails := util.Validate(req)
 	if len(fails) > 0 {
@@ -61,7 +62,7 @@ func (ca customerApi) Update(ctx *fiber.Ctx) error {
 
 	var req dto.UpdateCustomerRequest
 	if err := ctx.BodyParser(&req); err != nil {
-		return ctx.SendStatus(http.StatusUnprocessableEntity)
+		return ctx.Status(http.StatusUnprocessableEntity).JSON(dto.CreateResponseError(err.Error()))
 	}
 	fails := util.Validate(req)
 	if len(fails) > 0 {
