@@ -36,6 +36,13 @@ func (c customerService) Index(ctx context.Context) ([]dto.CustomerData, error) 
 }
 
 func (c customerService) Create(ctx context.Context, req dto.CreateCustomerRequest) error {
+	existCustomer, err := c.customerRepository.FindByCode(ctx, req.Code)
+	if err != nil {
+		return err
+	}
+	if existCustomer.ID != "" {
+		return errors.New("data code customer sudah ada")
+	}
 	customer := domain.Customer{
 		ID:   uuid.NewString(),
 		Code: req.Code,
@@ -56,6 +63,16 @@ func (c customerService) Update(ctx context.Context, req dto.UpdateCustomerReque
 	if persisted.ID == "" {
 		return errors.New("data customer tidak ditemukan")
 	}
+
+	existCustomer, err := c.customerRepository.FindByCode(ctx, req.Code)
+	if err != nil {
+		return err
+	}
+
+	if existCustomer.ID != "" && existCustomer.ID != persisted.ID {
+		return errors.New("data code customer sudah ada")
+	}
+
 	persisted.Code = req.Code
 	persisted.Name = req.Name
 	persisted.UpdatedAt = sql.NullTime{
