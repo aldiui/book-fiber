@@ -15,14 +15,15 @@ type customerApi struct {
 	customerService domain.CustomerService
 }
 
-func NewCustomer(app *fiber.App, customerService domain.CustomerService, auzhMidd fiber.Handler) {
+func NewCustomer(app *fiber.App, customerService domain.CustomerService, authMidd fiber.Handler) {
 	ca := customerApi{customerService: customerService}
+	customer := app.Group("/customers", authMidd)
 
-	app.Get("/customers", auzhMidd, ca.Index)
-	app.Post("/customers", auzhMidd, ca.Create)
-	app.Get("/customers/:id", auzhMidd, ca.Show)
-	app.Put("/customers/:id", auzhMidd, ca.Update)
-	app.Delete("/customers/:id", auzhMidd, ca.Delete)
+	customer.Get("", ca.Index)
+	customer.Post("", ca.Create)
+	customer.Get(":id", ca.Show)
+	customer.Put(":id", ca.Update)
+	customer.Delete(":id", ca.Delete)
 }
 
 func (ca customerApi) Index(ctx *fiber.Ctx) error {
@@ -47,7 +48,7 @@ func (ca customerApi) Create(ctx *fiber.Ctx) error {
 	}
 	fails := util.Validate(req)
 	if len(fails) > 0 {
-		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("erro validasi", fails))
+		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("validasi gagal", fails))
 	}
 	err := ca.customerService.Create(c, req)
 	if err != nil {
@@ -66,7 +67,7 @@ func (ca customerApi) Update(ctx *fiber.Ctx) error {
 	}
 	fails := util.Validate(req)
 	if len(fails) > 0 {
-		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("erro validasi", fails))
+		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("validasi gagal", fails))
 	}
 	req.ID = ctx.Params("id")
 	err := ca.customerService.Update(c, req)

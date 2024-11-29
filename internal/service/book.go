@@ -12,95 +12,123 @@ import (
 )
 
 type bookService struct {
-	bookRepository domain.BookRepository
+	bookRepository      domain.BookRepository
+	bookStockRepository domain.BookStockRepository
 }
 
-func NewBookService(bookRepository domain.BookRepository) domain.BookService {
+func NewBookService(bookRepository domain.BookRepository, bookStockRepository domain.BookStockRepository) domain.BookService {
 	return &bookService{
-		bookRepository: bookRepository,
+		bookRepository:      bookRepository,
+		bookStockRepository: bookStockRepository,
 	}
 }
 
-func (c bookService) Index(ctx context.Context) ([]dto.BookData, error) {
-	books, err := c.bookRepository.FindAll(ctx)
+func (b bookService) Index(ctx context.Context) ([]dto.BookData, error) {
+	books, err := b.bookRepository.FindAll(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	var bookData []dto.BookData
 	for _, v := range books {
-		bookData = append(bookData, dto.BookData{ID: v.ID, Title: v.Title, Description: v.Description})
+		bookData = append(bookData, dto.BookData{ID: v.ID, Isbn: v.Isbn, Title: v.Title, Description: v.Description})
 	}
 
 	return bookData, nil
 }
 
-func (c bookService) Create(ctx context.Context, req dto.CreateBookRequest) error {
-	existBook, err := c.bookRepository.FindByTitle(ctx, req.Title)
+func (b bookService) Create(ctx context.Context, req dto.CreateBookRequest) error {
+	existBook, err := b.bookRepository.FindByIsbn(ctx, req.Isbn)
 	if err != nil {
 		return err
 	}
 
 	if existBook.ID != "" {
-		return errors.New("data title book sudah ada")
+		return errors.New("data isbn book sudah ada")
 	}
 
 	book := domain.Book{
 		ID:          uuid.NewString(),
 		Title:       req.Title,
 		Description: req.Description,
+		Isbn:        req.Isbn,
 		CreatedAt: sql.NullTime{
 			Valid: true,
 			Time:  time.Now(),
 		},
 	}
-	return c.bookRepository.Save(ctx, &book)
+	return b.bookRepository.Save(ctx, &book)
 }
 
-func (c bookService) Update(ctx context.Context, req dto.UpdateBookRequest) error {
-	persisted, err := c.bookRepository.FindById(ctx, req.ID)
+func (b bookService) Update(ctx context.Context, req dto.UpdateBookRequest) error {
+	data, err := b.bookRepository.FindById(ctx, req.ID)
 	if err != nil {
 		return err
 	}
-	if persisted.ID == "" {
+	if data.ID == "" {
 		return errors.New("data book tidak ditemukan")
 	}
-	existBook, err := c.bookRepository.FindByTitle(ctx, req.Title)
+	existBook, err := b.bookRepository.FindByIsbn(ctx, req.Isbn)
+
 	if err != nil {
 		return err
 	}
 
-	if existBook.ID != "" && existBook.ID != persisted.ID {
-		return errors.New("data title book sudah ada")
+	if existBook.ID != "" && existBook.ID != data.ID {
+		return errors.New("data isbn book sudah ada")
 	}
 
-	persisted.Title = req.Title
-	persisted.Description = req.Description
-	persisted.UpdatedAt = sql.NullTime{
+	data.Title = req.Title
+	data.Description = req.Description
+	data.Isbn = req.Isbn
+	data.UpdatedAt = sql.NullTime{
 		Valid: true,
 		Time:  time.Now(),
 	}
-	return c.bookRepository.Update(ctx, &persisted)
+	return b.bookRepository.Update(ctx, &data)
 }
 
-func (c bookService) Delete(ctx context.Context, id string) error {
-	exist, err := c.bookRepository.FindById(ctx, id)
+func (b bookService) Delete(ctx context.Context, id string) error {
+	exist, err := b.bookRepository.FindById(ctx, id)
 	if err != nil {
 		return err
 	}
 	if exist.ID == "" {
 		return errors.New("data book tidak ditemukan")
 	}
-	return c.bookRepository.Delete(ctx, id)
+	return b.bookRepository.Delete(ctx, id)
 }
 
-func (c bookService) Show(ctx context.Context, id string) (dto.BookData, error) {
-	persisted, err := c.bookRepository.FindById(ctx, id)
+func (b bookService) Show(ctx context.Context, id string) (dto.BookShowData, error) {
+	data, err := b.bookRepository.FindById(ctx, id)
 	if err != nil {
-		return dto.BookData{}, err
+		return dto.BookShowData{}, err
 	}
-	if persisted.ID == "" {
-		return dto.BookData{}, errors.New("data book tidak ditemukan")
+	if data.ID == "" {
+		return dto.BookShowData{}, domain.BookNotFound
 	}
-	return dto.BookData{ID: persisted.ID, Title: persisted.Title, Description: persisted.Description}, nil
+
+	stocks, er := b.bookStockRepository.FindBookById(ctx, data.ID)
+
+	if er != nil {
+		return dto.BookShowData{}, er
+	}
+
+	stocksData := make([]dto.BookStockData, 0)
+	for _, v := range stocks {
+		stocksData = append(stocksData, dto.BookStockData{
+			Code:   v.Code,
+			Status: v.Status,
+		})
+	}
+
+	return dto.BookShowData{
+		BookData: dto.BookData{
+			ID:          data.ID,
+			Title:       data.Title,
+			Description: data.Description,
+			Isbn:        data.Isbn,
+		},
+		Stocks: stocksData,
+	}, nil
 }

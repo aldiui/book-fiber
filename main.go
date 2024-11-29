@@ -24,14 +24,19 @@ func main() {
 		},
 	})
 	customerRepository := repository.NewCustomer(dbConnection)
-	bookRepository := repository.NewBook(dbConnection)
 	userRepository := repository.NewUser(dbConnection)
+	bookRepository := repository.NewBook(dbConnection)
+	bookStockRepository := repository.NewBookStock(dbConnection)
+
 	customerService := service.NewCustomerService(customerRepository)
-	bookService := service.NewBookService(bookRepository)
 	authService := service.NewAuthService(cnf, userRepository)
+	bookService := service.NewBookService(bookRepository, bookStockRepository)
+	bookStockService := service.NewBookStockService(bookRepository, bookStockRepository)
+
 	api.NewAuth(app, authService)
 	api.NewCustomer(app, customerService, jwtMidd)
 	api.NewBook(app, bookService, jwtMidd)
+	api.NewBookStock(app, bookStockService, jwtMidd)
 
 	_ = app.Listen(cnf.Server.Host + ":" + cnf.Server.Port)
 }

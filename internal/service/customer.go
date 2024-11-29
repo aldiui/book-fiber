@@ -56,11 +56,11 @@ func (c customerService) Create(ctx context.Context, req dto.CreateCustomerReque
 }
 
 func (c customerService) Update(ctx context.Context, req dto.UpdateCustomerRequest) error {
-	persisted, err := c.customerRepository.FindById(ctx, req.ID)
+	data, err := c.customerRepository.FindById(ctx, req.ID)
 	if err != nil {
 		return err
 	}
-	if persisted.ID == "" {
+	if data.ID == "" {
 		return errors.New("data customer tidak ditemukan")
 	}
 
@@ -69,17 +69,17 @@ func (c customerService) Update(ctx context.Context, req dto.UpdateCustomerReque
 		return err
 	}
 
-	if existCustomer.ID != "" && existCustomer.ID != persisted.ID {
+	if existCustomer.ID != "" && existCustomer.ID != data.ID {
 		return errors.New("data code customer sudah ada")
 	}
 
-	persisted.Code = req.Code
-	persisted.Name = req.Name
-	persisted.UpdatedAt = sql.NullTime{
+	data.Code = req.Code
+	data.Name = req.Name
+	data.UpdatedAt = sql.NullTime{
 		Valid: true,
 		Time:  time.Now(),
 	}
-	return c.customerRepository.Update(ctx, &persisted)
+	return c.customerRepository.Update(ctx, &data)
 }
 
 func (c customerService) Delete(ctx context.Context, id string) error {
@@ -94,12 +94,12 @@ func (c customerService) Delete(ctx context.Context, id string) error {
 }
 
 func (c customerService) Show(ctx context.Context, id string) (dto.CustomerData, error) {
-	persisted, err := c.customerRepository.FindById(ctx, id)
+	data, err := c.customerRepository.FindById(ctx, id)
 	if err != nil {
 		return dto.CustomerData{}, err
 	}
-	if persisted.ID == "" {
+	if data.ID == "" {
 		return dto.CustomerData{}, errors.New("data customer tidak ditemukan")
 	}
-	return dto.CustomerData{ID: persisted.ID, Code: persisted.Code, Name: persisted.Name}, nil
+	return dto.CustomerData{ID: data.ID, Code: data.Code, Name: data.Name}, nil
 }

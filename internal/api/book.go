@@ -15,14 +15,15 @@ type bookApi struct {
 	bookService domain.BookService
 }
 
-func NewBook(app *fiber.App, bookService domain.BookService, auzhMidd fiber.Handler) {
+func NewBook(app *fiber.App, bookService domain.BookService, authMidd fiber.Handler) {
 	ba := bookApi{bookService: bookService}
+	book := app.Group("/books", authMidd)
 
-	app.Get("/books", auzhMidd, ba.Index)
-	app.Post("/books", auzhMidd, ba.Create)
-	app.Get("/books/:id", auzhMidd, ba.Show)
-	app.Put("/books/:id", auzhMidd, ba.Update)
-	app.Delete("/books/:id", auzhMidd, ba.Delete)
+	book.Get("", ba.Index)
+	book.Post("", ba.Create)
+	book.Get(":id", ba.Show)
+	book.Put(":id", ba.Update)
+	book.Delete(":id", ba.Delete)
 }
 
 func (ba bookApi) Index(ctx *fiber.Ctx) error {
@@ -45,9 +46,10 @@ func (ba bookApi) Create(ctx *fiber.Ctx) error {
 	if err := ctx.BodyParser(&req); err != nil {
 		return ctx.Status(http.StatusUnprocessableEntity).JSON(dto.CreateResponseError(err.Error()))
 	}
+
 	fails := util.Validate(req)
 	if len(fails) > 0 {
-		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("erro validasi", fails))
+		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("validasi gagal", fails))
 	}
 	err := ba.bookService.Create(c, req)
 	if err != nil {
@@ -66,7 +68,7 @@ func (ba bookApi) Update(ctx *fiber.Ctx) error {
 	}
 	fails := util.Validate(req)
 	if len(fails) > 0 {
-		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("erro validasi", fails))
+		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("validasi gagal", fails))
 	}
 	req.ID = ctx.Params("id")
 	err := ba.bookService.Update(c, req)

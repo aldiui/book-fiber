@@ -18,14 +18,14 @@ func NewUser(con *sql.DB) domain.UserRepository {
 	}
 }
 
-func (u userRepository) FindByEmail(ctx context.Context, email string) (result domain.User, err error) {
-	dataset := u.db.From("users").Where(goqu.C("deleted_at").IsNull(), goqu.C("email").Eq(email))
+func (ur userRepository) FindByEmail(ctx context.Context, email string) (result domain.User, err error) {
+	dataset := ur.db.From("users").Where(goqu.C("deleted_at").IsNull(), goqu.C("email").Eq(email))
 	_, err = dataset.ScanStructContext(ctx, &result)
 	return
 }
 
-func (u userRepository) Save(ctx context.Context, c *domain.User) error {
-	executor := u.db.Insert("users").Rows(c).Executor()
+func (ur userRepository) Save(ctx context.Context, c *domain.User) error {
+	executor := ur.db.Insert("users").Rows(c).Executor()
 	_, err := executor.ExecContext(ctx)
 	return err
 }

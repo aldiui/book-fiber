@@ -32,7 +32,7 @@ func (aa authApi) Login(ctx *fiber.Ctx) error {
 	}
 	fails := util.Validate(req)
 	if len(fails) > 0 {
-		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("erro validasi", fails))
+		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("validasi gagal", fails))
 	}
 	res, err := aa.authService.Login(c, req)
 	if err != nil {
@@ -51,7 +51,7 @@ func (aa authApi) Register(ctx *fiber.Ctx) error {
 	}
 	fails := util.Validate(req)
 	if len(fails) > 0 {
-		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("erro validasi", fails))
+		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("validasi gagal", fails))
 	}
 	res, err := aa.authService.Register(c, req)
 	if err != nil {
