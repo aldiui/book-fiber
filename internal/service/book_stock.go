@@ -23,7 +23,7 @@ func (b bookStockService) Create(ctx context.Context, req dto.CreateBookStockReq
 	if err != nil {
 		return err
 	}
-	if book.ID == "" {
+	if book.Id == "" {
 		return domain.BookNotFound
 	}
 	stocks := make([]domain.BookStock, 0)

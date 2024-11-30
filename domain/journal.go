@@ -12,7 +12,7 @@ const (
 )
 
 type Journal struct {
-	ID         string       `db:"id"`
+	Id         string       `db:"id"`
 	BookId     string       `db:"book_id"`
 	StockCode  string       `db:"stock_code"`
 	CustomerId string       `db:"customer_id"`

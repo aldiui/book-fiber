@@ -31,6 +31,12 @@ func (br bookRepository) FindById(ctx context.Context, id string) (result domain
 	return
 }
 
+func (br bookRepository) FindByIds(ctx context.Context, ids []string) (result []domain.Book, err error) {
+	dataset := br.db.From("books").Where(goqu.C("deleted_at").IsNull(), goqu.C("id").Eq(ids))
+	err = dataset.ScanStructsContext(ctx, &result)
+	return
+}
+
 func (br bookRepository) FindByIsbn(ctx context.Context, isbn string) (result domain.Book, err error) {
 	dataset := br.db.From("books").Where(goqu.C("deleted_at").IsNull(), goqu.C("isbn").Eq(isbn))
 	_, err = dataset.ScanStructContext(ctx, &result)
@@ -44,7 +50,7 @@ func (br bookRepository) Save(ctx context.Context, c *domain.Book) error {
 }
 
 func (br bookRepository) Update(ctx context.Context, c *domain.Book) error {
-	executor := br.db.Update("books").Where(goqu.C("id").Eq(c.ID)).Set(c).Executor()
+	executor := br.db.Update("books").Where(goqu.C("id").Eq(c.Id)).Set(c).Executor()
 	_, err := executor.ExecContext(ctx)
 	return err
 }

@@ -31,15 +31,15 @@ func (a authService) Login(ctx context.Context, req dto.AuthRequest) (dto.AuthRe
 	if err != nil {
 		return dto.AuthResponse{}, err
 	}
-	if user.ID == "" {
-		return dto.AuthResponse{}, errors.New("data user tidak ditemukan")
+	if user.Id == "" {
+		return dto.AuthResponse{}, domain.UserNotFound
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err != nil {
 		return dto.AuthResponse{}, errors.New("password salah")
 	}
 	claim := jwt.MapClaims{
-		"id":  user.ID,
+		"id":  user.Id,
 		"exp": time.Now().Add(time.Duration(a.conf.Jwt.Exp) * time.Minute).Unix(),
 	}
 
@@ -56,7 +56,7 @@ func (a authService) Register(ctx context.Context, req dto.AuthRegisterRequest) 
 	if err != nil {
 		return dto.AuthResponse{}, err
 	}
-	if existingUser.ID != "" {
+	if existingUser.Id != "" {
 		return dto.AuthResponse{}, errors.New("data user sudah terdaftar")
 	}
 
@@ -67,7 +67,7 @@ func (a authService) Register(ctx context.Context, req dto.AuthRegisterRequest) 
 
 	createUuid := uuid.NewString()
 	user := domain.User{
-		ID:       createUuid,
+		Id:       createUuid,
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: string(hashedPassword),

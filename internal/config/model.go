@@ -4,11 +4,13 @@ type Config struct {
 	Server   Server
 	Database Database
 	Jwt      Jwt
+	Storage  Storage
 }
 
 type Server struct {
-	Host string
-	Port string
+	Host  string
+	Port  string
+	Asset string
 }
 
 type Database struct {
@@ -23,4 +25,8 @@ type Database struct {
 type Jwt struct {
 	Key string
 	Exp int
+}
+
+type Storage struct {
+	BasePath string
 }

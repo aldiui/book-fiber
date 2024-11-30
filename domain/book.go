@@ -7,18 +7,20 @@ import (
 )
 
 type Book struct {
-	ID          string       `db:"id"`
-	Isbn        string       `db:"isbn"`
-	Title       string       `db:"title"`
-	Description string       `db:"description"`
-	CreatedAt   sql.NullTime `db:"created_at"`
-	UpdatedAt   sql.NullTime `db:"updated_at"`
-	DeletedAt   sql.NullTime `db:"deleted_at"`
+	Id          string         `db:"id"`
+	Isbn        string         `db:"isbn"`
+	Title       string         `db:"title"`
+	Description string         `db:"description"`
+	CoverId     sql.NullString `db:"cover_id"`
+	CreatedAt   sql.NullTime   `db:"created_at"`
+	UpdatedAt   sql.NullTime   `db:"updated_at"`
+	DeletedAt   sql.NullTime   `db:"deleted_at"`
 }
 
 type BookRepository interface {
 	FindAll(ctx context.Context) ([]Book, error)
 	FindById(ctx context.Context, id string) (Book, error)
+	FindByIds(ctx context.Context, ids []string) ([]Book, error)
 	FindByIsbn(ctx context.Context, isbn string) (Book, error)
 	Save(ctx context.Context, c *Book) error
 	Update(ctx context.Context, c *Book) error

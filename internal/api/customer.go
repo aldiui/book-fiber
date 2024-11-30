@@ -69,7 +69,7 @@ func (ca customerApi) Update(ctx *fiber.Ctx) error {
 	if len(fails) > 0 {
 		return ctx.Status(http.StatusBadRequest).JSON(dto.CreateResponseErrorData("validasi gagal", fails))
 	}
-	req.ID = ctx.Params("id")
+	req.Id = ctx.Params("id")
 	err := ca.customerService.Update(c, req)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(dto.CreateResponseError(err.Error()))

@@ -1,10 +1,11 @@
 package dto
 
 type BookData struct {
-	ID          string `json:"id"`
+	Id          string `json:"id"`
 	Isbn        string `json:"isbn"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	CoverId     string `json:"cover_id"`
 }
 
 type BookStockData struct {
@@ -21,11 +22,13 @@ type CreateBookRequest struct {
 	Isbn        string `json:"isbn"  validate:"required"`
 	Title       string `json:"title" validate:"required"`
 	Description string `json:"description" validate:"required"`
+	CoverId     string `json:"cover_id"`
 }
 
 type UpdateBookRequest struct {
-	ID          string `json:"-"`
+	Id          string `json:"-"`
 	Isbn        string `json:"isbn"  validate:"required"`
 	Title       string `json:"title" validate:"required"`
 	Description string `json:"description" validate:"required"`
+	CoverId     string `json:"cover_id"`
 }

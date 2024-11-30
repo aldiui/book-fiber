@@ -31,6 +31,12 @@ func (cr customerRepository) FindById(ctx context.Context, id string) (result do
 	return
 }
 
+func (cr customerRepository) FindByIds(ctx context.Context, ids []string) (result []domain.Customer, err error) {
+	dataset := cr.db.From("customers").Where(goqu.C("deleted_at").IsNull(), goqu.C("id").Eq(ids))
+	err = dataset.ScanStructsContext(ctx, &result)
+	return
+}
+
 func (cr customerRepository) FindByCode(ctx context.Context, code string) (result domain.Customer, err error) {
 	dataset := cr.db.From("customers").Where(goqu.C("deleted_at").IsNull(), goqu.C("code").Eq(code))
 	_, err = dataset.ScanStructContext(ctx, &result)
@@ -44,7 +50,7 @@ func (cr customerRepository) Save(ctx context.Context, c *domain.Customer) error
 }
 
 func (cr customerRepository) Update(ctx context.Context, c *domain.Customer) error {
-	executor := cr.db.Update("customers").Where(goqu.C("id").Eq(c.ID)).Set(c).Executor()
+	executor := cr.db.Update("customers").Where(goqu.C("id").Eq(c.Id)).Set(c).Executor()
 	_, err := executor.ExecContext(ctx)
 	return err
 }

@@ -29,7 +29,7 @@ func (c customerService) Index(ctx context.Context) ([]dto.CustomerData, error) 
 
 	var customerData []dto.CustomerData
 	for _, v := range customers {
-		customerData = append(customerData, dto.CustomerData{ID: v.ID, Code: v.Code, Name: v.Name})
+		customerData = append(customerData, dto.CustomerData{Id: v.Id, Code: v.Code, Name: v.Name})
 	}
 
 	return customerData, nil
@@ -40,11 +40,11 @@ func (c customerService) Create(ctx context.Context, req dto.CreateCustomerReque
 	if err != nil {
 		return err
 	}
-	if existCustomer.ID != "" {
+	if existCustomer.Id != "" {
 		return errors.New("data code customer sudah ada")
 	}
 	customer := domain.Customer{
-		ID:   uuid.NewString(),
+		Id:   uuid.NewString(),
 		Code: req.Code,
 		Name: req.Name,
 		CreatedAt: sql.NullTime{
@@ -56,12 +56,12 @@ func (c customerService) Create(ctx context.Context, req dto.CreateCustomerReque
 }
 
 func (c customerService) Update(ctx context.Context, req dto.UpdateCustomerRequest) error {
-	data, err := c.customerRepository.FindById(ctx, req.ID)
+	data, err := c.customerRepository.FindById(ctx, req.Id)
 	if err != nil {
 		return err
 	}
-	if data.ID == "" {
-		return errors.New("data customer tidak ditemukan")
+	if data.Id == "" {
+		return domain.CustomerNotFound
 	}
 
 	existCustomer, err := c.customerRepository.FindByCode(ctx, req.Code)
@@ -69,7 +69,7 @@ func (c customerService) Update(ctx context.Context, req dto.UpdateCustomerReque
 		return err
 	}
 
-	if existCustomer.ID != "" && existCustomer.ID != data.ID {
+	if existCustomer.Id != "" && existCustomer.Id != data.Id {
 		return errors.New("data code customer sudah ada")
 	}
 
@@ -87,8 +87,8 @@ func (c customerService) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	}
-	if exist.ID == "" {
-		return errors.New("data customer tidak ditemukan")
+	if exist.Id == "" {
+		return domain.CustomerNotFound
 	}
 	return c.customerRepository.Delete(ctx, id)
 }
@@ -98,8 +98,8 @@ func (c customerService) Show(ctx context.Context, id string) (dto.CustomerData,
 	if err != nil {
 		return dto.CustomerData{}, err
 	}
-	if data.ID == "" {
-		return dto.CustomerData{}, errors.New("data customer tidak ditemukan")
+	if data.Id == "" {
+		return dto.CustomerData{}, domain.CustomerNotFound
 	}
-	return dto.CustomerData{ID: data.ID, Code: data.Code, Name: data.Name}, nil
+	return dto.CustomerData{Id: data.Id, Code: data.Code, Name: data.Name}, nil
 }

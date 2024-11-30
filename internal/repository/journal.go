@@ -43,7 +43,7 @@ func (j *journalRepository) Save(ctx context.Context, journal *domain.Journal) e
 }
 
 func (j *journalRepository) Update(ctx context.Context, journal *domain.Journal) error {
-	executor := j.db.Update("journals").Where(goqu.C("id").Eq(journal.ID)).Set(journal).Executor()
+	executor := j.db.Update("journals").Where(goqu.C("id").Eq(journal.Id)).Set(journal).Executor()
 	_, err := executor.ExecContext(ctx)
 	return err
 }
