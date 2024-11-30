@@ -1,0 +1,751 @@
+{
+	"info": {
+		"_postman_id": "162ec0ea-9e12-4895-9d22-4769fc6a99b9",
+		"name": "book-fiber",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32137232",
+		"_collection_link": "https://restless-escape-18786.postman.co/workspace/claim-rembusment~2a30dc5a-0b93-4373-b91f-5bc4432bbc41/collection/32137232-162ec0ea-9e12-4895-9d22-4769fc6a99b9?action=share&source=collection_link&creator=32137232"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Email\" : \"admin@gmail.com\",\r\n    \"Password\" : \"11221122\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\" : \"Aldi Jaya Mulyana\",\r\n    \"Email\" : \"admin2@gmail.com\",\r\n    \"Password\" : \"11221122\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Books",
+			"item": [
+				{
+					"name": "Get Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/books",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isbn\" : \"000002\",\r\n    \"title\" : \"Si Kancil uNYU\",\r\n    \"description\" : \"Suka Mencuri hATI\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/books",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Books By Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Code\" : \"101\",\r\n    \"Name\" : \"Aliyah\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/books/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"books",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "8e123f7a-46d7-4589-8064-ccee4ce8d871"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isbn\" : \"000001\",\r\n    \"title\" : \"Si Kancil Anak Nakal\",\r\n    \"description\" : \"Suka Mencuri Mentimun\",\r\n    \"cover_id\" : \"c8c4b412-97f0-43e3-b2f8-5b7817693043\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/books/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"books",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3b71f4ca-84ab-4a37-961d-a625cf700b25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/books/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"books",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "eea51d88-e037-497c-8a7d-fb109bcfe470"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Book Stocks",
+			"item": [
+				{
+					"name": "Create Book Stocks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"book_id\" : \"8e123f7a-46d7-4589-8064-ccee4ce8d871\",\r\n    \"codes\" : [\"BP-001\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/book-stocks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"book-stocks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/book-stocks?code=BP-001;BP-002",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"book-stocks"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "BP-001;BP-002"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customers",
+			"item": [
+				{
+					"name": "Get Customers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/customers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Customers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"102\",\r\n    \"name\": \"Aliyah Updated\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/customers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customers By Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Code\" : \"101\",\r\n    \"Name\" : \"Aliyah\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/customers/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "769d506b-4a35-4ea4-ba2f-04d9723576db"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Customers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\" : \"101\",\r\n    \"name\" : \"Aliyah Updated\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/customers/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "eea51d88-e037-497c-8a7d-fb109bcfe470"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Customers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/customers/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "eea51d88-e037-497c-8a7d-fb109bcfe470"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Journal",
+			"item": [
+				{
+					"name": "Get Journal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/journals",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"journals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Journal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"book_id\" : \"8e123f7a-46d7-4589-8064-ccee4ce8d871\",\r\n    \"book_stock\" : \"BP-003\",\r\n    \"customer_id\" : \"769d506b-4a35-4ea4-ba2f-04d9723576db\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/journals",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"journals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Journal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isbn\" : \"000001\",\r\n    \"title\" : \"Si Kancil Anak Nakal\",\r\n    \"description\" : \"Suka Mencuri Mentimun\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/journals/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"journals",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "99877fbd-f544-4944-80a7-6584cb4feadc"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Media",
+			"item": [
+				{
+					"name": "Media",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "media",
+									"type": "file",
+									"src": "/C:/Users/aldiu/Downloads/Telegram Desktop/Screenshot 2024-11-13 at 19.47.58.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/media",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"media"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Media",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "media",
+									"type": "file",
+									"src": "/C:/Users/aldiu/Downloads/Telegram Desktop/Screenshot 2024-11-13 at 19.47.58.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/media/:filename",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"media",
+								":filename"
+							],
+							"variable": [
+								{
+									"key": "filename",
+									"value": "21cf0fda-613a-4eee-a19c-5a869d8196a5Gambar WhatsApp 2024-11-28 pukul 09.54.39_3bafa42f.jpg"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

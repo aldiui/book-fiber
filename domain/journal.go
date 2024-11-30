@@ -19,6 +19,7 @@ type Journal struct {
 	Status     string       `db:"status"`
 	BorrowedAt sql.NullTime `db:"borrowed_at"`
 	ReturnedAt sql.NullTime `db:"returned_at"`
+	DueAt      sql.NullTime `db:"due_at"`
 }
 
 type JournalSearch struct {

@@ -16,14 +16,16 @@ type journalService struct {
 	bookRepository      domain.BookRepository
 	bookStockRepository domain.BookStockRepository
 	customerRepository  domain.CustomerRepository
+	chargeRepository    domain.ChargeRepository
 }
 
-func NewJournalService(journalRepository domain.JournalRepository, bookRepository domain.BookRepository, bookStockRepository domain.BookStockRepository, customerRepository domain.CustomerRepository) domain.JournalService {
+func NewJournalService(journalRepository domain.JournalRepository, bookRepository domain.BookRepository, bookStockRepository domain.BookStockRepository, customerRepository domain.CustomerRepository, chargeRepository domain.ChargeRepository) domain.JournalService {
 	return &journalService{
 		journalRepository:   journalRepository,
 		bookRepository:      bookRepository,
 		bookStockRepository: bookStockRepository,
 		customerRepository:  customerRepository,
+		chargeRepository:    chargeRepository,
 	}
 }
 
@@ -117,6 +119,10 @@ func (j *journalService) Create(ctx context.Context, req dto.CreateJournalReques
 		StockCode:  req.BookStock,
 		CustomerId: req.CustomerId,
 		Status:     domain.JournalStatusInProgress,
+		DueAt: sql.NullTime{
+			Valid: true,
+			Time:  time.Now().Add(time.Hour * 24 * 7),
+		},
 		BorrowedAt: sql.NullTime{
 			Valid: true,
 			Time:  time.Now(),
@@ -167,5 +173,26 @@ func (j *journalService) Return(ctx context.Context, req dto.ReturnJournalReques
 		Valid: true,
 		Time:  time.Now(),
 	}
-	return j.journalRepository.Update(ctx, &journal)
+	err = j.journalRepository.Update(ctx, &journal)
+	if err != nil {
+		return err
+	}
+	hoursLate := time.Now().Sub(journal.DueAt.Time).Hours()
+	if hoursLate >= 24 {
+		daysLate := int(hoursLate / 24)
+		charge := domain.Charge{
+			Id:           uuid.NewString(),
+			JournalId:    journal.Id,
+			DaysLate:     daysLate,
+			DailyLateFee: 5000,
+			Total:        daysLate * 5000,
+			UserId:       req.UserId,
+			CreatedAt: sql.NullTime{
+				Valid: true,
+				Time:  time.Now(),
+			},
+		}
+		err = j.chargeRepository.Save(ctx, &charge)
+	}
+	return err
 }

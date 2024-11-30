@@ -42,5 +42,4 @@ func (m *mediaService) Create(ctx context.Context, req dto.CreateMediaRequest) (
 		Path: media.Path,
 		Url:  url,
 	}, nil
-
 }

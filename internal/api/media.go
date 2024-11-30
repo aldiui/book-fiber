@@ -19,10 +19,8 @@ type mediaApi struct {
 }
 
 func NewMedia(app *fiber.App, cnf *config.Config, mediaService domain.MediaService, authMidd fiber.Handler) {
-	ma := mediaApi{mediaService: mediaService}
-	media := app.Group("/media", authMidd)
-
-	media.Post("", ma.Create)
+	ma := mediaApi{cnf: cnf, mediaService: mediaService}
+	media := app.Group("/media", authMidd).Post("", ma.Create)
 	media.Static("", cnf.Storage.BasePath)
 }
 

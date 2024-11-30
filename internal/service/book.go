@@ -3,23 +3,29 @@ package service
 import (
 	"book-fiber/domain"
 	"book-fiber/dto"
+	"book-fiber/internal/config"
 	"context"
 	"database/sql"
 	"errors"
+	"path"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 type bookService struct {
+	cnf                 *config.Config
 	bookRepository      domain.BookRepository
 	bookStockRepository domain.BookStockRepository
+	mediaRepository     domain.MediaRepository
 }
 
-func NewBookService(bookRepository domain.BookRepository, bookStockRepository domain.BookStockRepository) domain.BookService {
+func NewBookService(cnf *config.Config, bookRepository domain.BookRepository, bookStockRepository domain.BookStockRepository, mediaRepository domain.MediaRepository) domain.BookService {
 	return &bookService{
+		cnf:                 cnf,
 		bookRepository:      bookRepository,
 		bookStockRepository: bookStockRepository,
+		mediaRepository:     mediaRepository,
 	}
 }
 
@@ -29,9 +35,28 @@ func (b bookService) Index(ctx context.Context) ([]dto.BookData, error) {
 		return nil, err
 	}
 
+	coverId := make([]string, 0)
+	for _, v := range books {
+		if v.CoverId.Valid {
+			coverId = append(coverId, v.CoverId.String)
+		}
+	}
+
+	covers := make(map[string]string)
+	if len(coverId) > 0 {
+		coversDb, _ := b.mediaRepository.FindByIds(ctx, coverId)
+		for _, v := range coversDb {
+			covers[v.Id] = path.Join(b.cnf.Server.Asset, v.Path)
+		}
+	}
+
 	var bookData []dto.BookData
 	for _, v := range books {
-		bookData = append(bookData, dto.BookData{Id: v.Id, Isbn: v.Isbn, Title: v.Title, Description: v.Description, CoverId: v.CoverId.String})
+		var coverUrl string
+		if v2, e := covers[v.CoverId.String]; e {
+			coverUrl = v2
+		}
+		bookData = append(bookData, dto.BookData{Id: v.Id, Isbn: v.Isbn, Title: v.Title, Description: v.Description, CoverUrl: coverUrl})
 	}
 
 	return bookData, nil
@@ -134,13 +159,21 @@ func (b bookService) Show(ctx context.Context, id string) (dto.BookShowData, err
 		})
 	}
 
+	var coverUrl string
+	if data.CoverId.Valid {
+		cover, _ := b.mediaRepository.FindById(ctx, data.CoverId.String)
+		if cover.Path != "" {
+			coverUrl = path.Join(b.cnf.Server.Asset, cover.Path)
+		}
+	}
+
 	return dto.BookShowData{
 		BookData: dto.BookData{
 			Id:          data.Id,
-			Title:       data.Title,
-			Description: data.Description,
 			Isbn:        data.Isbn,
-			CoverId:     data.CoverId.String,
+			Title:       data.Title,
+			CoverUrl:    coverUrl,
+			Description: data.Description,
 		},
 		Stocks: stocksData,
 	}, nil

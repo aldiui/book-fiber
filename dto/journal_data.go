@@ -20,4 +20,5 @@ type CreateJournalRequest struct {
 
 type ReturnJournalRequest struct {
 	JournalId string `json:"journal_id" validate:"required"`
+	UserId    string `json:"-"`
 }

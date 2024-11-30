@@ -4,8 +4,8 @@ type BookData struct {
 	Id          string `json:"id"`
 	Isbn        string `json:"isbn"`
 	Title       string `json:"title"`
+	CoverUrl    string `json:"cover_url"`
 	Description string `json:"description"`
-	CoverId     string `json:"cover_id"`
 }
 
 type BookStockData struct {
