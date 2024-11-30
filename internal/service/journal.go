@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"math"
 	"time"
 
 	"github.com/google/uuid"
@@ -178,6 +179,8 @@ func (j *journalService) Return(ctx context.Context, req dto.ReturnJournalReques
 		return err
 	}
 	hoursLate := time.Now().Sub(journal.DueAt.Time).Hours()
+	hoursLate = math.Floor(hoursLate)
+
 	if hoursLate >= 24 {
 		daysLate := int(hoursLate / 24)
 		charge := domain.Charge{
